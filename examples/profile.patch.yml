@@ -1,0 +1,13 @@
+- insert:
+    - id: a2a-hitl
+      name: dsh-a2a-hitl
+      config:
+        agents:
+          - id: example
+            description: Local simulated agent for human-confirmation testing
+            cardUrl: http://127.0.0.1:4100/.well-known/agent-card.json
+            allowPrivateNetwork: true
+            allowInsecureHttp: true
+        requestTimeoutMs: 90000
+        humanTimeoutMs: 300000
+        maxInputRounds: 16

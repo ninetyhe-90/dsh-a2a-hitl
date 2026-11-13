@@ -1,0 +1,5 @@
+- insert:
+    - id: a2a-hitl
+      name: dsh-a2a-hitl
+      config:
+        agents: []

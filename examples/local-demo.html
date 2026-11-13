@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSH A2A 人工确认 · 本地验证</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#172033;background:#f3f5fa}*{box-sizing:border-box}body{margin:0}main{max-width:1120px;margin:48px auto;padding:0 24px}.eyebrow{font-size:12px;letter-spacing:2px;color:#5166aa;font-weight:700}h1{font-size:32px;letter-spacing:-1px;margin:12px 0}p{color:#69738b;line-height:1.7}.banner{padding:14px 18px;border:1px solid #cbd7f4;background:#eaf0fd;border-radius:12px;margin:24px 0;color:#334c85}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.card{background:white;border:1px solid #e0e5ef;border-radius:18px;padding:26px;box-shadow:0 8px 30px #22345d08}h2{font-size:18px;margin:0 0 18px}.row{display:flex;gap:12px;align-items:center;justify-content:space-between}.badge{font-size:12px;background:#edf0f8;border-radius:20px;padding:7px 12px;color:#4a5c80}label{display:block;font-size:14px;font-weight:600;margin:14px 0 8px}textarea{font:inherit;resize:vertical;width:100%;min-height:100px;border:1px solid #d6ddea;border-radius:10px;padding:13px;outline:none}textarea:focus{border-color:#536ddd;box-shadow:0 0 0 3px #536ddd15}button{font:inherit;cursor:pointer;border:1px solid #d6ddea;border-radius:10px;padding:11px 17px;background:#fff;color:#283551}button.primary{background:#435dd2;color:#fff;border-color:#435dd2}button:disabled{cursor:not-allowed;opacity:.5}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.choice{font-weight:500;background:#f8f9fc;border-radius:9px;padding:12px;margin:8px 0;display:flex;gap:10px;align-items:center}pre{font:12px/1.6 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word;background:#f6f8fc;border-radius:10px;padding:16px;max-height:360px;overflow:auto}.number{font-size:34px;font-weight:700;color:#435dd2}.muted{font-size:13px;color:#7c859b}.empty{padding:30px 8px;text-align:center;color:#8790a5}#error{color:#b13d3d}#timeline{margin:12px 0;padding-left:20px}#timeline li{margin:8px 0;font-size:13px;color:#596983}.wide{margin-top:22px}#question{line-height:1.7;font-weight:600}@media(max-width:760px){main{margin:24px auto}.grid{grid-template-columns:1fr}h1{font-size:26px}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">LOCAL CAPABILITY LAB</div><h1>外部 Agent 请求，真实人工确认</h1>
+<p>通过通用插件把外部 A2A 提问帧接到 DSH 原生问答服务，再按原任务回传结构化答案。</p>
+<div class="banner">仅本地模拟。没有连接线上 DSH、LLM 或真实业务接口。“模拟修改”只增加本进程内存计数。</div>
+<div class="grid">
+<section class="card"><div class="row"><h2>发起委托</h2><span id="status" class="badge">idle</span></div>
+<label for="message">交给模拟 Agent 的请求</label><textarea id="message">把示例记录的说明改为“本地协议验证”。</textarea>
+<div class="actions"><button id="start" class="primary">开始本地联调</button></div><p id="error" role="alert"></p>
+<div class="row"><div><div class="muted">模拟写入次数</div><div id="count" class="number">0</div></div><div class="muted">取消不增加计数<br>自由输入会重新提问</div></div>
+<h2 style="margin-top:24px">协议轨迹</h2><ol id="timeline"></ol></section>
+<section class="card"><h2>用户确认</h2><div id="empty" class="empty">启动联调后，等待外部 Agent 提问。</div>
+<div id="ask" hidden><div id="question"></div><div id="choices"></div><label for="custom">自由输入（优先于选项）</label><textarea id="custom" placeholder="如需修改参数，请输入新要求；随后会重新确认。"></textarea><div class="actions"><button id="answer" class="primary">提交用户回答</button></div><h2 style="margin-top:24px">完整提问参数</h2><pre id="detail"></pre></div></section>
+</div><section class="card wide"><h2>最终结果与结构化回包</h2><pre id="result">尚未开始</pre><pre id="reply">尚未回传 hitl_response</pre></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);let current;let pendingId;let working=false;
+async function post(path,data){const res=await fetch(path,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(data)});const value=await res.json();if(!res.ok)throw new Error(value.error);return value}
+$('start').onclick=async()=>{try{$('error').textContent='';await post('/start',{message:$('message').value});await refresh()}catch(error){$('error').textContent=error.message}};
+$('answer').onclick=async()=>{if(!current?.question)return;try{$('error').textContent='';$('answer').disabled=true;const selected=[...document.querySelectorAll('input[name=selection]:checked')].map(i=>i.value);await post('/answer',{id:current.question.id,selected,custom:$('custom').value});await refresh()}catch(error){$('error').textContent=error.message;$('answer').disabled=false}};
+async function refresh(){if(working)return;working=true;try{const res=await fetch('/state',{credentials:'same-origin'});if(!res.ok)throw new Error('读取本地状态失败');current=await res.json();$('status').textContent=current.state;$('count').textContent=current.mockWrites;$('start').disabled=['working','input-required'].includes(current.state);$('ask').hidden=!current.question;$('empty').hidden=!!current.question;if(current.question&&pendingId!==current.question.id){pendingId=current.question.id;$('question').textContent=current.question.question;$('detail').textContent=current.question.detail;$('custom').value='';$('choices').replaceChildren();for(const option of current.question.options||[]){const label=document.createElement('label');label.className='choice';const input=document.createElement('input');input.type=current.question.multiSelect?'checkbox':'radio';input.name='selection';input.value=option.label;label.append(input,document.createTextNode(option.label));$('choices').append(label)}$('answer').disabled=false}$('timeline').replaceChildren();for(const item of current.log){const li=document.createElement('li');li.textContent=item.step;$('timeline').append(li)}$('result').textContent=current.result?JSON.stringify(current.result,null,2):'等待用户回答或外部 Agent 返回。';const reply=[...current.log].reverse().find(item=>item.step==='Structured HITL response');$('reply').textContent=reply?JSON.stringify({hitl_response:reply.detail},null,2):'尚未回传 hitl_response'}catch(error){$('error').textContent=error.message}finally{working=false}}
+void refresh();setInterval(()=>void refresh(),500);
+</script></body></html>

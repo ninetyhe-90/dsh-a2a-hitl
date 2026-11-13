@@ -1,0 +1,236 @@
+{
+  "scope": "loopback-only",
+  "runtime": "real Cordis ToolsService and UserQuestionService, simulated Agent lifecycle and remote endpoint",
+  "state": "completed",
+  "mockWrites": 1,
+  "result": {
+    "conversation_id": "062ba0c9-ac79-4762-93c4-391facee7392",
+    "task_id": "5c3dc89c-f762-483a-ab34-3cb642c62f5e",
+    "state": "completed",
+    "answer": "模拟修改完成，仅增加内存计数。没有访问真实业务接口。",
+    "artifacts": [
+      {
+        "metadata": {
+          "kind": "question_done",
+          "success": true,
+          "results": [
+            {
+              "success": true,
+              "answer": "模拟修改完成，仅增加内存计数。没有访问真实业务接口。"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "log": [
+    {
+      "step": "External A2A request",
+      "detail": {
+        "sessionId": "ebcbfda0-4cf0-41be-a218-cdefa9e1999d",
+        "taskId": "7250f405-6fab-48be-8ccc-146c1672ceef"
+      }
+    },
+    {
+      "step": "External SSE frame",
+      "detail": {
+        "id": "7250f405-6fab-48be-8ccc-146c1672ceef",
+        "status": {
+          "state": "input-required"
+        },
+        "artifacts": [
+          {
+            "metadata": {
+              "kind": "hitl_required",
+              "hitl_id": "8a1ee2cf-3283-43e0-b1c1-fa16bbf296a6",
+              "action_type": "ask_user_question",
+              "question": "是否确认这次模拟修改？",
+              "options": [
+                {
+                  "label": "确认模拟修改"
+                },
+                {
+                  "label": "取消"
+                }
+              ],
+              "multi_select": false,
+              "allow_custom_input": true,
+              "arguments": {
+                "operation": "simulation_only",
+                "note": "把示例记录的说明改为“本地协议验证”。"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": "DSH native userQuestions.ask",
+      "detail": {
+        "questionId": "a2a-e7a29d20-99b2-4acd-81b8-761c43153a87",
+        "callerId": "local-browser"
+      }
+    },
+    {
+      "step": "Structured HITL response",
+      "detail": {
+        "hitl_id": "8a1ee2cf-3283-43e0-b1c1-fa16bbf296a6",
+        "selected": [
+          "取消"
+        ],
+        "custom_input": ""
+      }
+    },
+    {
+      "step": "External SSE frame",
+      "detail": {
+        "id": "7250f405-6fab-48be-8ccc-146c1672ceef",
+        "status": {
+          "state": "completed"
+        },
+        "artifacts": [
+          {
+            "metadata": {
+              "kind": "question_done",
+              "success": true,
+              "results": [
+                {
+                  "success": true,
+                  "answer": "用户取消，模拟写入次数未增加。没有访问真实业务接口。"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": "External A2A request",
+      "detail": {
+        "sessionId": "d42f723e-6bbb-48fa-8c17-2b1b8004d68d",
+        "taskId": "5c3dc89c-f762-483a-ab34-3cb642c62f5e"
+      }
+    },
+    {
+      "step": "External SSE frame",
+      "detail": {
+        "id": "5c3dc89c-f762-483a-ab34-3cb642c62f5e",
+        "status": {
+          "state": "input-required"
+        },
+        "artifacts": [
+          {
+            "metadata": {
+              "kind": "hitl_required",
+              "hitl_id": "f463b51f-c332-4e2c-bcbd-e8efe587a199",
+              "action_type": "ask_user_question",
+              "question": "是否确认这次模拟修改？",
+              "options": [
+                {
+                  "label": "确认模拟修改"
+                },
+                {
+                  "label": "取消"
+                }
+              ],
+              "multi_select": false,
+              "allow_custom_input": true,
+              "arguments": {
+                "operation": "simulation_only",
+                "note": "把示例记录的说明改为“本地协议验证”。"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": "DSH native userQuestions.ask",
+      "detail": {
+        "questionId": "a2a-c2d49199-e04d-4bc6-8369-ce7914f15040",
+        "callerId": "local-browser"
+      }
+    },
+    {
+      "step": "Structured HITL response",
+      "detail": {
+        "hitl_id": "f463b51f-c332-4e2c-bcbd-e8efe587a199",
+        "selected": [],
+        "custom_input": "将说明改为“二次确认本地验证”。"
+      }
+    },
+    {
+      "step": "External SSE frame",
+      "detail": {
+        "id": "5c3dc89c-f762-483a-ab34-3cb642c62f5e",
+        "status": {
+          "state": "input-required"
+        },
+        "artifacts": [
+          {
+            "metadata": {
+              "kind": "hitl_required",
+              "hitl_id": "58ee44fb-7511-4bc6-a33a-b27d228df060",
+              "action_type": "ask_user_question",
+              "question": "是否确认这次模拟修改？",
+              "options": [
+                {
+                  "label": "确认模拟修改"
+                },
+                {
+                  "label": "取消"
+                }
+              ],
+              "multi_select": false,
+              "allow_custom_input": true,
+              "arguments": {
+                "operation": "simulation_only",
+                "note": "将说明改为“二次确认本地验证”。"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": "DSH native userQuestions.ask",
+      "detail": {
+        "questionId": "a2a-a2bdf777-bbf8-4daa-9573-57b04f6c29d9",
+        "callerId": "local-browser"
+      }
+    },
+    {
+      "step": "Structured HITL response",
+      "detail": {
+        "hitl_id": "58ee44fb-7511-4bc6-a33a-b27d228df060",
+        "selected": [
+          "确认模拟修改"
+        ],
+        "custom_input": ""
+      }
+    },
+    {
+      "step": "External SSE frame",
+      "detail": {
+        "id": "5c3dc89c-f762-483a-ab34-3cb642c62f5e",
+        "status": {
+          "state": "completed"
+        },
+        "artifacts": [
+          {
+            "metadata": {
+              "kind": "question_done",
+              "success": true,
+              "results": [
+                {
+                  "success": true,
+                  "answer": "模拟修改完成，仅增加内存计数。没有访问真实业务接口。"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
