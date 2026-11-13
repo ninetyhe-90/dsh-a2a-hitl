@@ -72,10 +72,11 @@ npm ci --include=dev
 npm run check        # typecheck + 41 个测试 + build，产出 dist/
 ```
 
-从 Release 安装预构建包（已包含 `dist/`，无需本地构建）：
+从 [Release](https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/tag/v0.1.0) 下载预构建包后安装（已包含 `dist/`，无需本地构建）：
 
 ```bash
-dsh plugin --profile <name> add https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/download/v0.1.0/dsh-a2a-hitl-0.1.0.tgz
+curl -LO https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/download/v0.1.0/dsh-a2a-hitl-0.1.0.tgz
+dsh plugin --profile <name> add ./dsh-a2a-hitl-0.1.0.tgz
 ```
 
 或直接从 GitHub 源码安装（会执行 `prepare` 构建）：
