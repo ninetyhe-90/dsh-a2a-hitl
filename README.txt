@@ -91,4 +91,6 @@ Exact build/test dependencies are locked in package-lock.json. Peer dependencies
 reuse host services. Compatibility has been source-checked for dsh-v0.2.1-rc.5 and
 validated using the listed installed DSH package version; refer to local check output
 for the actual version. No monorepo paths are required in the published package.
-This project has no configured remote repository and has not been published.
+Published on GitHub at https://github.com/ninetyhe-90/dsh-a2a-hitl with a
+prebuilt tarball attached to release v0.1.0. The package has not been published
+to npm; install the release tarball or the repository directly with dsh plugin add.

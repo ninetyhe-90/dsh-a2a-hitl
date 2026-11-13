@@ -1,27 +1,42 @@
-# dsh-a2a-hitl
+<h1 align="center">
+  <br>
+  dsh-a2a-hitl
+  <br>
+</h1>
 
-让 DeepSeek Harness 安全地调用外部 A2A 智能体，并把远端的人工确认请求交给可信 UI。
+<p align="center">
+  <strong>让 DeepSeek Harness 安全地调用外部 A2A 智能体，并把人工确认交回真人。</strong><br>
+  <sub>A2A SSE client + trusted Human-in-the-loop relay, packaged as a reusable DSH plugin.</sub>
+</p>
 
-一个可复用的 DSH 插件：A2A SSE 调用 + Human-in-the-loop 中继。
+<p align="center">
+  <a href="https://github.com/ninetyhe-90/dsh-a2a-hitl/releases"><img src="https://img.shields.io/github/v/release/ninetyhe-90/dsh-a2a-hitl?style=flat-square" alt="Release"></a>
+  <a href="package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.18.0-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 22.18+"></a>
+  <a href="package.json"><img src="https://img.shields.io/badge/DSH-0.2.x-4D6BFE?style=flat-square" alt="DSH 0.2.x"></a>
+  <a href="test"><img src="https://img.shields.io/badge/tests-41%20passed-brightgreen?style=flat-square" alt="41 tests passed"></a>
+  <a href="#-license"><img src="https://img.shields.io/badge/license-UNLICENSED-lightgrey?style=flat-square" alt="UNLICENSED"></a>
+</p>
 
-[快速开始](#快速开始) · [在 DSH 中启用](#在-dsh-中启用) · [配置](#配置) · [给模型暴露的工具](#给模型暴露的工具) · [对接远端 A2A 服务](#对接远端-a2a-服务) · [安全边界](#安全边界) · [直接使用客户端](#直接使用客户端) · [开发与验证](#开发与验证)
+<p align="center">
+  <a href="#-快速开始">🚀 快速开始</a> •
+  <a href="#-在-dsh-中启用">🔌 在 DSH 中启用</a> •
+  <a href="#-配置">⚙️ 配置</a> •
+  <a href="#-给模型暴露的工具">🛠 工具</a> •
+  <a href="#-一次调用发生了什么">🔁 调用流程</a> •
+  <a href="#-安全边界">🔒 安全边界</a> •
+  <a href="#-直接使用客户端">🧩 独立客户端</a> •
+  <a href="#-开发与验证">🧪 开发</a>
+</p>
 
-> 一句话给使用者：装好之后，模型多出 `a2a_list_agents` 和 `a2a_call` 两个工具；远端要求人工确认时，弹窗来自 DSH 原生 `userQuestions`，模型无法代替用户作答。
-
-| 项目 | 值 |
-| --- | --- |
-| 运行环境 | Node >= 22.18.0 |
-| 兼容 DSH | `^0.2.1-rc.5` 或 `^0.2.2-rc.2` |
-| 关键依赖 | `@deepseek-ai/cordis ~4.1.0`、`dsh-agent`、`dsh-tools`、`dsh-user-questions` |
-| 模块形式 | ESM，导出 `.`（插件入口）与 `./client`（独立客户端） |
-| 当前状态 | `npm run check` 通过：typecheck + 41 个测试 + build |
-| License | UNLICENSED，内部使用，尚未发布到 npm |
+<p align="center">
+  <sub>装好之后，模型多出 <code>a2a_list_agents</code> 和 <code>a2a_call</code> 两个工具；远端要求人工确认时，弹窗来自 DSH 原生 <code>userQuestions</code>，模型无法代替用户作答。</sub>
+</p>
 
 ---
 
-## 这是什么
+## ✨ 这是什么
 
-`dsh-a2a-hitl` 把「调用外部 A2A 智能体」这件事收进一个受控通道：外部智能体由管理员在配置里白名单登记，模型只能按 `id` 调用，不能传 URL；远端在任务中途要求人工确认时，请求被翻译成 DSH 原生的用户提问，由真人作答后再回传给远端，模型全程无法伪造、替换或跳过这个回答。
+`dsh-a2a-hitl` 把「调用外部 A2A 智能体」收进一个受控通道：外部智能体由管理员在配置里白名单登记，模型只能按 `id` 调用，不能传 URL；远端在任务中途要求人工确认时，请求被翻译成 DSH 原生的用户提问，由真人作答后再回传给远端，模型全程无法伪造、替换或跳过这个回答。
 
 | 能力 | 说明 |
 | --- | --- |
@@ -32,61 +47,47 @@
 | 会话句柄 | `conversation_id` 绑定本地会话、agent 与凭据，带 TTL、容量上限和忙锁 |
 | 网络与凭据防护 | 强制 HTTPS、拒绝私网/保留地址、禁止重定向、凭据只从环境变量取 |
 
-它不做什么：不执行远端要求调用的本地工具（`action_type: client_tool` 一律拒绝）、不自动重试失败请求、不自动批准任何确认、不把远端的最终回复当作本地操作授权、不提供 A2A 服务端实现（本项目是客户端/插件）。
+**它不做什么：** 不执行远端要求调用的本地工具（`action_type: client_tool` 一律拒绝）、不自动重试失败请求、不自动批准任何确认、不把远端的最终回复当作本地操作授权、不提供 A2A 服务端实现（本项目是客户端/插件）。
+
+| 项目 | 值 |
+| --- | --- |
+| 运行环境 | Node >= 22.18.0 |
+| 兼容 DSH | `^0.2.1-rc.5` 或 `^0.2.2-rc.2` |
+| 关键依赖 | `@deepseek-ai/cordis ~4.1.0`、`dsh-agent`、`dsh-tools`、`dsh-user-questions` |
+| 模块形式 | ESM，导出 `.`（插件入口）与 `./client`（独立客户端） |
+| 当前状态 | `npm run check` 通过：typecheck + 41 个测试 + build |
+| 分发方式 | GitHub Release 预构建 tarball；尚未发布到 npm |
+| License | UNLICENSED，见 [License](#-license) |
 
 ---
 
-## 一次调用发生了什么
+## 🚀 快速开始
 
-```
-模型调用 a2a_call(agent=id, message=..., conversation_id=?)
-        |
-        v
-校验：白名单 id / 根 agent / 凭据环境变量 / 会话归属
-        |
-        v
-GET Agent Card  ->  校验 JSONRPC 端点 origin  ->  POST tasks/sendSubscribe (SSE)
-        |
-        +-- state=working ------------> answer_delta 文本增量 (onDelta)
-        |
-        +-- state=input-required -----> hitl_required 载荷
-        |                                   |
-        |                          DSH userQuestions 可信 UI
-        |                                   |
-        |                          真人选择 / 自由输入
-        |                                   |
-        |                          严格校验答案标签与基数
-        |                                   |
-        |                          POST hitl_response (同一 sessionId)
-        |                                   |
-        +-----------------------------------+
-        |
-        v
-state=completed + question_done / text artifacts  ->  answer
-```
-
-两处超时是独立的：`requestTimeoutMs` 管每一轮 HTTP/SSE，`humanTimeoutMs` 管等待真人；等待超时不会向远端发出任何回复。
-
----
-
-## 快速开始
-
-前置条件：Node >= 22.18.0，且能安装 `@deepseek-ai/*` 私有包（需要对应 registry 权限）。
+前置条件：Node >= 22.18.0。
 
 ```bash
-npm install
+git clone https://github.com/ninetyhe-90/dsh-a2a-hitl.git
+cd dsh-a2a-hitl
+npm ci --include=dev
 npm run check        # typecheck + 41 个测试 + build，产出 dist/
 ```
 
-分发给其他同学（仓库尚未配置远端、未发布 npm，用本地 tgz）：
+从 Release 安装预构建包（已包含 `dist/`，无需本地构建）：
+
+```bash
+dsh plugin --profile <name> add https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/download/v0.1.0/dsh-a2a-hitl-0.1.0.tgz
+```
+
+或直接从 GitHub 源码安装（会执行 `prepare` 构建）：
+
+```bash
+dsh plugin --profile <name> add github:ninetyhe-90/dsh-a2a-hitl
+```
+
+自己打包分发：
 
 ```bash
 npm pack             # prepack 自动跑 check，产出 dsh-a2a-hitl-0.1.0.tgz
-```
-
-对方拿到后：
-
-```bash
 npm install ./dsh-a2a-hitl-0.1.0.tgz
 ```
 
@@ -94,15 +95,15 @@ npm install ./dsh-a2a-hitl-0.1.0.tgz
 
 | 方式 | 适用 | 入口 |
 | --- | --- | --- |
-| DSH 插件（主用法） | 让模型拥有 A2A 工具 | 包根 `apply`，见「在 DSH 中启用」 |
-| 独立客户端 | 自己的 Node 程序里直接调 | `dsh-a2a-hitl/client`，见「直接使用客户端」 |
+| DSH 插件（主用法） | 让模型拥有 A2A 工具 | 包根 `apply`，见[在 DSH 中启用](#-在-dsh-中启用) |
+| 独立客户端 | 自己的 Node 程序里直接调 | `dsh-a2a-hitl/client`，见[直接使用客户端](#-直接使用客户端) |
 | 本地验证 | 不起 DSH，跑通完整链路 | `npm test`，见 `test/runtime.test.ts` |
 
 `test/runtime.test.ts` 会起一个本地假 A2A 服务，并加载真实的 Cordis / DSH `tools` 与 `userQuestions` 服务，跑两个并发 owner 的完整确认链路（含跨 owner 句柄隔离断言）；这是理解运行时行为最快的入口。
 
 ---
 
-## 在 DSH 中启用
+## 🔌 在 DSH 中启用
 
 包内 `package.json` 通过 `dsh.bundle.patch` 指向 `cordis.patch.yml`，内容是把插件行插进 profile：
 
@@ -152,7 +153,28 @@ export A2A_REVIEWER_TOKEN='Bearer <由管理员注入，不要写进配置文件
 
 ---
 
-## 配置
+## 🔁 一次调用发生了什么
+
+```mermaid
+flowchart TD
+    A["模型调用 a2a_call(agent=id, message=..., conversation_id=?)"] --> B["校验：白名单 id / 根 agent / 凭据环境变量 / 会话归属"]
+    B --> C["GET Agent Card → 校验 JSONRPC 端点 origin"]
+    C --> D["POST tasks/sendSubscribe（SSE）"]
+    D -->|state=working| E["answer_delta 文本增量（onDelta）"]
+    D -->|state=input-required| F["hitl_required 载荷"]
+    F --> G["DSH userQuestions 可信 UI"]
+    G --> H["真人选择 / 自由输入"]
+    H --> I["严格校验答案标签与基数"]
+    I --> J["POST hitl_response（同一 sessionId）"]
+    J --> D
+    D -->|state=completed| K["question_done / text artifacts → answer"]
+```
+
+两处超时是独立的：`requestTimeoutMs` 管每一轮 HTTP/SSE，`humanTimeoutMs` 管等待真人；等待超时不会向远端发出任何回复。
+
+---
+
+## ⚙️ 配置
 
 `agents[]` 每一项：
 
@@ -183,7 +205,7 @@ export A2A_REVIEWER_TOKEN='Bearer <由管理员注入，不要写进配置文件
 
 ---
 
-## 给模型暴露的工具
+## 🛠 给模型暴露的工具
 
 插件通过 `inject: ['tools', 'userQuestions']` 依赖 DSH 的两个服务，注册两个工具：
 
@@ -221,7 +243,7 @@ export A2A_REVIEWER_TOKEN='Bearer <由管理员注入，不要写进配置文件
 
 ---
 
-## 对接远端 A2A 服务
+## 🔗 对接远端 A2A 服务
 
 ### 请求与响应格式
 
@@ -271,7 +293,7 @@ export A2A_REVIEWER_TOKEN='Bearer <由管理员注入，不要写进配置文件
 
 ---
 
-## 安全边界
+## 🔒 安全边界
 
 1. 目标由管理员白名单决定，模型只传 `id`，无法指定任意 URL。
 2. 默认强制 HTTPS；`http://` 需 `allowInsecureHttp`；URL 中禁止凭据、query、fragment，凭据只能走 `headersEnv`。
@@ -288,7 +310,7 @@ export A2A_REVIEWER_TOKEN='Bearer <由管理员注入，不要写进配置文件
 
 ---
 
-## 直接使用客户端
+## 🧩 直接使用客户端
 
 不接 DSH 时可以从 `./client` 导入纯 TypeScript/JS 客户端：
 
@@ -326,7 +348,7 @@ DSH 插件模式下 `human` 由 `createNativeHumanBridge` 自动注入，不需�
 
 ---
 
-## 开发与验证
+## 🧪 开发与验证
 
 | 命令 | 作用 |
 | --- | --- |
@@ -335,7 +357,7 @@ DSH 插件模式下 `human` 由 `createNativeHumanBridge` 自动注入，不需�
 | `npm run build` | 编译到 `dist/`（含 `.d.ts` 与 sourcemap） |
 | `npm run check` | typecheck + test + build，提交前跑这条 |
 | `npm pack` | `prepack` 自动跑 `check`，产出可分发的 tgz |
-| `npm run demo` | 当前指向 `examples/local-demo.ts`，该文件尚未落地，暂不可用 |
+| `npm run demo` | 启动本地模拟 A2A 服务的浏览器演示（`examples/local-demo.ts`） |
 
 代码结构：
 
@@ -349,16 +371,12 @@ DSH 插件模式下 `human` 由 `createNativeHumanBridge` 自动注入，不需�
 | `src/transport.ts` | 安全 HTTP 传输、地址检查、禁止重定向 |
 | `src/errors.ts` | `A2aError` / `RemoteRpcError`、超时与 abort |
 | `examples/local-runtime.ts` | 本地 Cordis + DSH questions 运行时（测试用） |
+| `examples/local-demo.ts` | 带浏览器 UI 的本地演示 |
 | `test/*.test.ts` | 边界、协议、插件、端到端运行时用例 |
-
-当前仓库状态（分发时请一并告知同学）：
-
-- 当前目录还不是 git 仓库，包也没有发布到 npm；用 `npm pack` 的 tgz 或直接拷贝目录分发。
-- `package.json` 的 `files` 声明了 `examples/profile.patch.yml`、`scripts.demo` 指向 `examples/local-demo.ts`，这两个文件目前不存在；配置示例以本 README 的「在 DSH 中启用」为准，端到端示例以 `test/runtime.test.ts` 为准。
 
 ---
 
-## 错误码与排错
+## 🩺 错误码与排错
 
 `A2aError.code` 常见取值：
 
@@ -384,6 +402,6 @@ DSH 插件模式下 `human` 由 `createNativeHumanBridge` 自动注入，不需�
 
 ---
 
-## License
+## 📜 License
 
 UNLICENSED。内部使用，未公开发布；依赖的 `@deepseek-ai/*` 包需要对应 registry 权限。
