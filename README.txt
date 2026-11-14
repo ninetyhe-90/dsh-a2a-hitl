@@ -92,5 +92,11 @@ reuse host services. Compatibility has been source-checked for dsh-v0.2.1-rc.5 a
 validated using the listed installed DSH package version; refer to local check output
 for the actual version. No monorepo paths are required in the published package.
 Published on GitHub at https://github.com/ninetyhe-90/dsh-a2a-hitl with a
-prebuilt tarball attached to release v0.1.0. The package has not been published
+prebuilt tarball attached to release v0.1.1. The package has not been published
 to npm; install the release tarball or the repository directly with dsh plugin add.
+
+License
+The source is public, but commercial use is not permitted. This project is
+released under the PolyForm Noncommercial License 1.0.0; see LICENSE.
+The @deepseek-ai/* packages remain under their own licenses and still require
+access to the matching registry.

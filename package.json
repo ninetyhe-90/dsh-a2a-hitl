@@ -1,9 +1,9 @@
 {
   "name": "dsh-a2a-hitl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A reusable DeepSeek Harness plugin for A2A SSE calls and trusted human-input relay",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "engines": {
     "node": ">=22.18.0",
     "dsh": "^0.2.1-rc.5 || ^0.2.2-rc.2"

@@ -14,7 +14,7 @@
   <a href="package.json"><img src="https://img.shields.io/badge/node-%3E%3D22.18.0-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js 22.18+"></a>
   <a href="package.json"><img src="https://img.shields.io/badge/DSH-0.2.x-4D6BFE?style=flat-square" alt="DSH 0.2.x"></a>
   <a href="test"><img src="https://img.shields.io/badge/tests-41%20passed-brightgreen?style=flat-square" alt="41 tests passed"></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/license-UNLICENSED-lightgrey?style=flat-square" alt="UNLICENSED"></a>
+  <a href="#-license"><img src="https://img.shields.io/badge/license-PolyForm--Noncommercial--1.0.0-orange?style=flat-square" alt="PolyForm Noncommercial 1.0.0"></a>
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@
 | 模块形式 | ESM，导出 `.`（插件入口）与 `./client`（独立客户端） |
 | 当前状态 | `npm run check` 通过：typecheck + 41 个测试 + build |
 | 分发方式 | GitHub Release 预构建 tarball；尚未发布到 npm |
-| License | UNLICENSED，见 [License](#-license) |
+| License | 源码公开、禁止商用（[PolyForm Noncommercial 1.0.0](LICENSE)） |
 
 ---
 
@@ -72,11 +72,11 @@ npm ci --include=dev
 npm run check        # typecheck + 41 个测试 + build，产出 dist/
 ```
 
-从 [Release](https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/tag/v0.1.0) 下载预构建包后安装（已包含 `dist/`，无需本地构建）：
+从 [Release](https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/tag/v0.1.1) 下载预构建包后安装（已包含 `dist/`，无需本地构建）：
 
 ```bash
-curl -LO https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/download/v0.1.0/dsh-a2a-hitl-0.1.0.tgz
-dsh plugin --profile <name> add ./dsh-a2a-hitl-0.1.0.tgz
+curl -LO https://github.com/ninetyhe-90/dsh-a2a-hitl/releases/download/v0.1.1/dsh-a2a-hitl-0.1.1.tgz
+dsh plugin --profile <name> add ./dsh-a2a-hitl-0.1.1.tgz
 ```
 
 或直接从 GitHub 源码安装（会执行 `prepare` 构建）：
@@ -88,8 +88,8 @@ dsh plugin --profile <name> add github:ninetyhe-90/dsh-a2a-hitl
 自己打包分发：
 
 ```bash
-npm pack             # prepack 自动跑 check，产出 dsh-a2a-hitl-0.1.0.tgz
-npm install ./dsh-a2a-hitl-0.1.0.tgz
+npm pack             # prepack 自动跑 check，产出 dsh-a2a-hitl-0.1.1.tgz
+npm install ./dsh-a2a-hitl-0.1.1.tgz
 ```
 
 三种使用方式：
@@ -405,4 +405,10 @@ DSH 插件模式下 `human` 由 `createNativeHumanBridge` 自动注入，不需�
 
 ## 📜 License
 
-UNLICENSED。内部使用，未公开发布；依赖的 `@deepseek-ai/*` 包需要对应 registry 权限。
+**源码公开，禁止商用。** 本项目以 [PolyForm Noncommercial License 1.0.0](LICENSE) 发布。
+
+- 允许：任何非商业目的的使用、修改与分发，包括个人学习、研究、教学和慈善用途。
+- 禁止：以商业优势或金钱报酬为主要目的的使用、集成与分发，以及任何付费服务。
+- 商用需另行取得书面授权。
+
+`@deepseek-ai/*` 等依赖由各自的许可证约束，不在本项目授权范围内；安装这些依赖仍需对应的 registry 权限。
